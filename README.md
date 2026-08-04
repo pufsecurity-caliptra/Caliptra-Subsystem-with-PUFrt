@@ -38,7 +38,7 @@ This project provides a **pre-integrated** Caliptra subsystem with PUFrt as a **
 
 ## Architecture
 
-<p align="center">
+<p align="left">
   <img src="doc/architecture.png" width="500">
 </p>
 
