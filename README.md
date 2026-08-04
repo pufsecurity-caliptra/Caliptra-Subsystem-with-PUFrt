@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="docs/banner.png" width="800">
-</p>
-
 # Bring Up Your Own Caliptra
 
 A pre-integrated Caliptra reference environment that enables developers to start software development on FPGA with confidence.
