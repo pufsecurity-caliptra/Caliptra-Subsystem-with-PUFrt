@@ -112,4 +112,4 @@ For custom hardware security integration (Caliptra + PUFrt RTL integration, hard
 
 ## License
 
-Apache-2.0
+This project is licensed under the [Apache-2.0](LICENSE) License.
