@@ -8,10 +8,9 @@ A pre-integrated Caliptra reference environment that enables developers to start
 
 ---
 
-✅ Pre-integrated Caliptra + PUFrt
-✅ Official VCK190 FPGA Reference
-✅ Ready for Firmware Development
-✅ Open for Hardware Integration
+- ✅ Pre-integrated Caliptra + PUFrt
+- ✅ Official VCK190 FPGA Reference
+- ✅ Ready for Firmware and Software Development
 
 ---
 
