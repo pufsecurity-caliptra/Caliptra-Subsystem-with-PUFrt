@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.png" width="800">
+  <img src="docs/banner.png" width="800">
 </p>
 
 # Bring Up Your Own Caliptra
@@ -39,7 +39,7 @@ This project provides a **pre-integrated** Caliptra subsystem with PUFrt as a **
 ## Architecture
 
 <p align="center">
-  <img src="docs/images/architecture.png" width="700">
+  <img src="doc/architecture.png" width="700">
 </p>
 
 The Caliptra core connects to the Fuse Controller over the internal system bus. The Fuse Controller interfaces with PUFrt through the **OTI (One-Time Interface)**, enabling secure access to hardware root-of-trust primitives.
