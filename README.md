@@ -108,4 +108,5 @@ For custom hardware security integration (Caliptra + PUFrt RTL integration, hard
 
 ## License
 
-This project is licensed under the [Apache-2.0](LICENSE) License.
+This repository is provided for evaluation and development purposes only. 
+For commercial deployment, production use, or integration into commercial products, please contact PUFsecurity for licensing terms.
