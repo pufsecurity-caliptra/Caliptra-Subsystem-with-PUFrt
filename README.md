@@ -110,3 +110,4 @@ For custom hardware security integration (Caliptra + PUFrt RTL integration, hard
 
 This repository is provided for evaluation and development purposes only. 
 For commercial deployment, production use, or integration into commercial products, please contact PUFsecurity for licensing terms.
+This project is licensed under the (LICENSE) License.
