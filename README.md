@@ -122,7 +122,6 @@ Two targeted revisions to the Caliptra software stack were required to accommoda
 | `rom::test_rom_hooks::test::test_rom_hooks_fire_in_order` | Pass | Pass |  |
 | `rom::test_sw_digest_lock::test::test_sw_digest_lock` | Pass | Pass |  |
 | `test_raw_lifecycle_boot::test::test_raw_lifecycle_boot` | Pass | Pass |  |
-|---|---|---|---|
 
 ### Known Limitation: Fuse Reset for Test Iteration
 
