@@ -53,8 +53,6 @@ Together, the Caliptra subsystem and PUFrt form a pre-integrated, verified Root 
 
 ## Project Roadmap
 
-Beyond the OTI-based fuse access and primitive set described above, it's worth noting why this integration boundary was chosen. Caliptra specification deliberately leaves two hardware-level dependencies to the SoC integrator: non-volatile fuse storage and a qualified entropy source. Fuse storage is expected to be exposed through the OTI (One-Time Interface). Meanwhile, four independent entropy sources are expected to supply Caliptra. Because both dependencies are defined at the hardware interface level rather than the software level, integrating PUFrt's OTP storage and entropy source into the Caliptra subsystem is primarily a hardware integration effort — one carried out by connecting PUFrt to Caliptra's Fuse Controller over OTI. A key consequence of this approach is that, since the Caliptra-defined hardware interfaces themselves remain unchanged, the original Caliptra software stack is expected to run on the PUFrt-integrated platform with little to no modification.
-
 The goal of this integration effort is to demonstrate that the original Caliptra SDK continues to function correctly on a PUFrt-integrated platform, without requiring the community to adopt a divergent software stack. To validate this, the work is organized into three phases:
 
 1. ✅ **Establish a baseline.** Build the official, unmodified Caliptra FPGA image and run the test suites provided by the Caliptra SDK, producing a set of reference results against known-good hardware.
@@ -72,62 +70,59 @@ Two targeted revisions to the Caliptra software stack were required to accommoda
 
 ### Test Case Status
 
-[#test-case-status](#test-case-status)
-
-| Package | Test Case | Baseline (Original FPGA) | Reproduced (PUFrt-Integrated) | Remaining Gap / Status |
-|---|---|---|---|---|
-| `caliptra-mcu-hw-model` | `otp_provision::tests::test_decode_raw_state` | Pass | Pass |  |
-|  | `otp_provision::tests::test_decode_roundtrip_all_counts` | Pass | Pass |  |
-|  | `otp_provision::tests::test_decode_roundtrip_all_states` | Pass | Pass |  |
-|  | `otp_provision::tests::test_lifecycle_manufacturing` | Pass | Pass |  |
-|  | `otp_provision::tests::test_lifecycle_unlocked1` | Pass | Pass |  |
-|  | `otp_provision::tests::test_otp_generate_lifecycle_tokens_mem` | Pass | Pass |  |
-|  | `otp_provision::tests::test_otp_unscramble_token` | Pass | Pass |  |
-|  | `tests::test_mailbox_execute` | Pass | Pass |  |
-|  | `vmem::tests::test_pqc_key_type_doc_example` | Pass | Pass |  |
-|  | `vmem::tests::test_read_write_vmem` | Pass | Pass |  |
-|  | `vmem::tests::test_vendor_pk_hash_doc_example` | Pass | Pass |  |
-|---|---|---|---|---|
-| `caliptra-mcu-tests-integration` | `jtag::test_bare_metal_jtag::test::test_bare_metal_jtag_sideload` | Pass | Pass |  |
-|  | `jtag::test_jtag_taps::test::test_lcc_ta` | Pass | Pass |  |
-|  | `jtag::test_lc_transitions::test::test_lc_walkthrough` | Pass | Pass |  |
-|  | `jtag::test_lc_transitions::test::test_prod_rma_unlock` | Pass | Pass |  |
-|  | `jtag::test_lc_transitions::test::test_raw_unlock` | Pass | Pass |  |
-|  | `jtag::test_manuf_debug_unlock::test::test_manuf_debug_unlock` | Pass | Pass |  |
-|  | `jtag::test_prod_debug_unlock::test::test_prod_debug_unlock` | Pass | Pass |  |
-|  | `jtag::test_uds::test::test_uds` | Pass | Pass |  |
-|  | `rom::test_bootfsm_timeout::test::test_bootfsm_timeout` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_dot_error_then_continue` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_dot_override_full_flow` | Pass | **Fail** | Fuse reset function is needed |
-|  | `rom::test_i3c_services::test::test_i3c_services_dot_override_without_challenge` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_dot_recovery_invalid_payload` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_dot_status` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_error_mid_packet_then_recover` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_ping` | Pass | Pass |  |
-|  | `rom::test_i3c_services::test::test_i3c_services_unknown_cmd` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_dev_to_prod` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_dev_to_rma` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_dev_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_invalid_transition_error` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_prod_end_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_prod_to_prod_end` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_prod_to_rma` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_prod_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_raw_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_raw_to_test_unlocked0` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_rma_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_test_locked0_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_test_locked0_to_test_unlocked1` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_test_unlocked0_to_scrap` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_test_unlocked0_to_test_locked0` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_test_unlocked7_to_dev` | Pass | Pass |  |
-|  | `rom::test_lc_ctrl::test::test_lc_wrong_token_error` | Pass | Pass |  |
-|  | `rom::test_otp_blank_check::test::test_otp_blank_check` | Pass | Pass |  |
-|  | `rom::test_otp_scramble_check::test::test_otp_scramble_check` | Pass | Pass |  |
-|  | `rom::test_rom_hooks::test::test_rom_hooks_fire_in_order` | Pass | Pass |  |
-|  | `rom::test_sw_digest_lock::test::test_sw_digest_lock` | Pass | Pass |  |
-|  | `test_raw_lifecycle_boot::test::test_raw_lifecycle_boot` | Pass | Pass |  |
-|---|---|---|---|---|
+| Test Case | Baseline (Original FPGA) | Reproduced (PUFrt-Integrated) | Remaining Gap / Status |
+|---|---|---|---|
+| `otp_provision::tests::test_decode_raw_state` | Pass | Pass |  |
+| `otp_provision::tests::test_decode_roundtrip_all_counts` | Pass | Pass |  |
+| `otp_provision::tests::test_decode_roundtrip_all_states` | Pass | Pass |  |
+| `otp_provision::tests::test_lifecycle_manufacturing` | Pass | Pass |  |
+| `otp_provision::tests::test_lifecycle_unlocked1` | Pass | Pass |  |
+| `otp_provision::tests::test_otp_generate_lifecycle_tokens_mem` | Pass | Pass |  |
+| `otp_provision::tests::test_otp_unscramble_token` | Pass | Pass |  |
+| `tests::test_mailbox_execute` | Pass | Pass |  |
+| `vmem::tests::test_pqc_key_type_doc_example` | Pass | Pass |  |
+| `vmem::tests::test_read_write_vmem` | Pass | Pass |  |
+| `vmem::tests::test_vendor_pk_hash_doc_example` | Pass | Pass |  |
+| `jtag::test_bare_metal_jtag::test::test_bare_metal_jtag_sideload` | Pass | Pass |  |
+| `jtag::test_jtag_taps::test::test_lcc_ta` | Pass | Pass |  |
+| `jtag::test_lc_transitions::test::test_lc_walkthrough` | Pass | Pass |  |
+| `jtag::test_lc_transitions::test::test_prod_rma_unlock` | Pass | Pass |  |
+| `jtag::test_lc_transitions::test::test_raw_unlock` | Pass | Pass |  |
+| `jtag::test_manuf_debug_unlock::test::test_manuf_debug_unlock` | Pass | Pass |  |
+| `jtag::test_prod_debug_unlock::test::test_prod_debug_unlock` | Pass | Pass |  |
+| `jtag::test_uds::test::test_uds` | Pass | Pass |  |
+| `rom::test_bootfsm_timeout::test::test_bootfsm_timeout` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_dot_error_then_continue` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_dot_override_full_flow` | Pass | **Fail** | Fuse reset function is needed |
+| `rom::test_i3c_services::test::test_i3c_services_dot_override_without_challenge` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_dot_recovery_invalid_payload` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_dot_status` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_error_mid_packet_then_recover` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_ping` | Pass | Pass |  |
+| `rom::test_i3c_services::test::test_i3c_services_unknown_cmd` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_dev_to_prod` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_dev_to_rma` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_dev_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_invalid_transition_error` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_prod_end_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_prod_to_prod_end` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_prod_to_rma` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_prod_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_raw_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_raw_to_test_unlocked0` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_rma_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_test_locked0_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_test_locked0_to_test_unlocked1` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_test_unlocked0_to_scrap` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_test_unlocked0_to_test_locked0` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_test_unlocked7_to_dev` | Pass | Pass |  |
+| `rom::test_lc_ctrl::test::test_lc_wrong_token_error` | Pass | Pass |  |
+| `rom::test_otp_blank_check::test::test_otp_blank_check` | Pass | Pass |  |
+| `rom::test_otp_scramble_check::test::test_otp_scramble_check` | Pass | Pass |  |
+| `rom::test_rom_hooks::test::test_rom_hooks_fire_in_order` | Pass | Pass |  |
+| `rom::test_sw_digest_lock::test::test_sw_digest_lock` | Pass | Pass |  |
+| `test_raw_lifecycle_boot::test::test_raw_lifecycle_boot` | Pass | Pass |  |
+|---|---|---|---|
 
 ### Known Limitation: Fuse Reset for Test Iteration
 
