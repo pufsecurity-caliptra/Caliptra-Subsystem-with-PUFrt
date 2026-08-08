@@ -142,15 +142,11 @@ Because the PUFrt-integrated platform reuses the standard `caliptra-mcu-sw` tool
   FPGA-specific build and bring-up instructions:
   https://chipsalliance.github.io/caliptra-mcu-sw/fpga.html
 
-[**TODO**]
-- Specify https://github.com/pufsecurity-caliptra/caliptra-sw in `caliptra-mcu-sw`
-- Branch `pufrt` from `main-2.1` in `caliptra-mcu-sw` and set it as default
-
 ---
 
 ## Usage
 
-The PUFrt-integrated Caliptra FPGA image will be provided, developers can download and exercise the platform following the same workflow used for the original Caliptra FPGA reference:
+The PUFrt-integrated Caliptra FPGA image is provided, developers can download and exercise the platform following the same workflow used for the original Caliptra FPGA reference:
 
 1. **Set up the FPGA SD card and boot image.**
    Follow the `caliptra-mcu-sw` FPGA setup guide to prepare the SD card and load the FPGA boot image:
@@ -161,9 +157,6 @@ The PUFrt-integrated Caliptra FPGA image will be provided, developers can downlo
    https://chipsalliance.github.io/caliptra-mcu-sw/fpga.html#test-workflow
 
 This pre-integrated Caliptra subsystem with PUFrt provides the same environment as the original Caliptra subsystem for software and firmware developers. Any platform-specific behavior developers should be aware of — such as the fuse ECC handling and JTAG timeout adjustments — is documented in the Project Roadmap section. 
-
-[**TODO**]
-- Update the link to the FPGA image file boot1900.bin
 
 ---
 
